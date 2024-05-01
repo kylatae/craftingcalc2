@@ -36,41 +36,59 @@ function storeAllItems(items) {
 
 // Display the recipe
 function displayRecipe() {
-    const selectedItem = document.getElementById('craftable-items').value;
+    const selectedItemName = document.getElementById('craftable-items').value;
+
     const recipeDetails = document.getElementById('recipe-details');
     recipeDetails.innerHTML = ''; // Clear previous recipe
 
-    const selectedRecipe = craftingItems.find(item => item.Name === selectedItem);
-
-    // Header
-    const title = document.createElement('h2');
-    title.textContent = `Craft ${selectedRecipe.Name}`;
-    recipeDetails.appendChild(title);
-
-    // Recipe list
-    const recipeList = document.createElement('ul');
-    for (let i = 0; i < selectedRecipe.Recipe.length; i += 2) {
-        const ingredientName = selectedRecipe.Recipe[i];
-        const quantity = selectedRecipe.Recipe[i + 1];
-
-        const listItem = document.createElement('li');
-        listItem.textContent = `${ingredientName} x${quantity}`;
-        listItem.title = createTooltipText(ingredientName); // Add tooltip on mouseover
-
-        recipeList.appendChild(listItem);
-    }
-    recipeDetails.appendChild(recipeList);
-
-    // Workbench
-    const workbench = document.createElement('p');
-    workbench.textContent = `Workbench: ${selectedRecipe.Workbench[0]}`;
-    recipeDetails.appendChild(workbench);
+    buildCraftingTree(selectedItemName, recipeDetails, 0); 
 }
 
-function createTooltipText(itemName) {
-    const item = itemData[itemName];
-    return `Name: ${item.Name} 
-Type: ${item.Type}
-Obtain: ${item.Obtain.join(', ')}
-Description: ${item.Description}`;
+function buildCraftingTree(itemName, container, indentLevel) {
+    const item = craftingItems.find(item => item.Name === itemName);
+
+    if (!item) return; // Item not found in craftables
+
+    const listItem = document.createElement('li');
+    listItem.textContent = `${itemName} x${item.Recipe.includes(itemName) ? '?' : 1}`; // Check for circular recipes 
+    listItem.style.marginLeft = `${indentLevel * 20}px`; // Indentation
+
+    // Tooltip setup
+    listItem.addEventListener('mouseover', () => showTooltip(itemName));
+    listItem.addEventListener('mouseout', hideTooltip);
+
+    container.appendChild(listItem);
+
+    // Sub-recipe list
+    const subRecipeList = document.createElement('ul');
+    item.Recipe.forEach((ingredient, index) => {
+        if (index % 2 === 0) { // Even indices are ingredient names
+            buildCraftingTree(ingredient, subRecipeList, indentLevel + 1);
+        }
+    });
+    container.appendChild(subRecipeList);
 }
+
+function showTooltip(ingredientName) {
+  const item = itemData[ingredientName];
+
+  // Create tooltip element (modify styling as needed)
+  const tooltip = document.createElement('div');
+  tooltip.classList.add('tooltip'); 
+  tooltip.innerHTML = `
+    <strong>Name:</strong> ${item.Name}<br>
+    <strong>Type:</strong> ${item.Type}<br>
+    <strong>Obtain:</strong> ${item.Obtain.join(', ')}<br>
+    <strong>Description:</strong> ${item.Description}
+  `;
+  document.body.appendChild(tooltip);
+
+  // Position tooltip near the mouse (implementation omitted for brevity) 
+  // ...
+}
+
+function hideTooltip() {
+  const tooltip = document.querySelector('.tooltip');
+  if (tooltip) tooltip.remove();
+}
+
