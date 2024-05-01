@@ -7,3 +7,17 @@ body {
 #recipe-details ul li {
   cursor: help; /* Change cursor to indicate tooltip */
 }
+
+.tooltip {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  position: absolute; 
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  z-index: 10; /* Ensure tooltip is always on top */
+}
+
+/* Style for nested ingredient lists */
+#recipe-details ul ul { 
+  padding-left: 20px; /* Indent nested lists */
+} 

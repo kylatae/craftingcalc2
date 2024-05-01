@@ -37,54 +37,100 @@ function storeAllItems(items) {
 // Display the recipe
 function displayRecipe() {
     const selectedItemName = document.getElementById('craftable-items').value;
-
     const recipeDetails = document.getElementById('recipe-details');
     recipeDetails.innerHTML = ''; // Clear previous recipe
 
-    buildCraftingTree(selectedItemName, recipeDetails, 0); 
+    // Build the recipe tree recursively
+    const recipeTree = buildRecipeTree(selectedItemName);
+    renderRecipeTree(recipeTree, recipeDetails);
 }
 
-function buildCraftingTree(itemName, container, indentLevel) {
-    const item = craftingItems.find(item => item.Name === itemName);
+function buildRecipeTree(itemName) {
+    const recipe = craftingItems.find(item => item.Name === itemName);
 
-    if (!item) return; // Item not found in craftables
+    if (!recipe) return null; // Item is not craftable
 
-    const listItem = document.createElement('li');
-    listItem.textContent = `${itemName} x${item.Recipe.includes(itemName) ? '?' : 1}`; // Check for circular recipes 
-    listItem.style.marginLeft = `${indentLevel * 20}px`; // Indentation
+    const tree = {
+        name: itemName,
+        workbench: recipe.Workbench[0],
+        ingredients: []
+    };
 
-    // Tooltip setup
-    listItem.addEventListener('mouseover', () => showTooltip(itemName));
-    listItem.addEventListener('mouseout', hideTooltip);
+    for (let i = 0; i < recipe.Recipe.length; i += 2) {
+        const ingredientName = recipe.Recipe[i];
+        const quantity = recipe.Recipe[i + 1];
 
-    container.appendChild(listItem);
+        const ingredientTree = buildRecipeTree(ingredientName); // Recursion!
 
-    // Sub-recipe list
-    const subRecipeList = document.createElement('ul');
-    item.Recipe.forEach((ingredient, index) => {
-        if (index % 2 === 0) { // Even indices are ingredient names
-            buildCraftingTree(ingredient, subRecipeList, indentLevel + 1);
+        tree.ingredients.push({
+            name: ingredientName,
+            quantity: quantity,
+            tree: ingredientTree // Store the subtree 
+        });
+    }
+
+    return tree;
+}
+
+function renderRecipeTree(tree, parentElement) {
+    const itemHeader = document.createElement('h2');
+    itemHeader.textContent = `Craft ${tree.name}`;
+    parentElement.appendChild(itemHeader);
+ 
+    const ingredientList = document.createElement('ul');
+    tree.ingredients.forEach(ingredient => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${ingredient.name} x${ingredient.quantity}`;
+        
+        listItem.addEventListener('mouseover', () => showTooltip(ingredient.name));
+        listItem.addEventListener('mouseout', hideTooltip);
+
+        ingredientList.appendChild(listItem);
+
+        if (ingredient.tree) { // Render sub-ingredients recursively
+            renderRecipeTree(ingredient.tree, listItem);
         }
     });
-    container.appendChild(subRecipeList);
+
+    if (tree.workbench !== 'Self') {
+        const workbench = document.createElement('p');
+        workbench.textContent = tree.workbench;
+        parentElement.appendChild(workbench);
+    }
+
+    parentElement.appendChild(ingredientList);
 }
 
 function showTooltip(ingredientName) {
-  const item = itemData[ingredientName];
-
-  // Create tooltip element (modify styling as needed)
-  const tooltip = document.createElement('div');
-  tooltip.classList.add('tooltip'); 
-  tooltip.innerHTML = `
-    <strong>Name:</strong> ${item.Name}<br>
-    <strong>Type:</strong> ${item.Type}<br>
-    <strong>Obtain:</strong> ${item.Obtain.join(', ')}<br>
-    <strong>Description:</strong> ${item.Description}
-  `;
-  document.body.appendChild(tooltip);
-
-  // Position tooltip near the mouse (implementation omitted for brevity) 
-  // ...
+    const item = itemData[ingredientName];
+  
+    // Create tooltip element (modify styling as needed)
+    const tooltip = document.createElement('div');
+    tooltip.classList.add('tooltip');
+    tooltip.innerHTML = `
+      <strong>Name:</strong> ${item.Name}<br>
+      <strong>Type:</strong> ${item.Type}<br>
+      <strong>Obtain:</strong> ${item.Obtain.join(', ')}<br>
+      <strong>Description:</strong> ${item.Description}
+    `;
+    document.body.appendChild(tooltip);
+  
+    // Position tooltip near the mouse with adjustment for nested lists
+    const event = window.event; // Get the event object
+    const listItem = event.target;  // Get the <li> element that triggered the event
+  
+    let offsetLeft = listItem.offsetLeft + listItem.offsetWidth + 10; // Start position
+    let offsetTop = listItem.offsetTop;
+   
+    // Walk up the parent elements to adjust for nested lists
+    let currentParent = listItem.offsetParent;
+    while (currentParent !== recipeDetails) {
+      offsetLeft += currentParent.offsetLeft; 
+      currentParent = currentParent.offsetParent;
+    }
+  
+    tooltip.style.left = offsetLeft + 'px';
+    tooltip.style.top = offsetTop + 'px'; 
 }
 
 function hideTooltip() {
