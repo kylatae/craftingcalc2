@@ -8,5 +8,15 @@
     "Name": "Bottled Water",
     "Recipe": ["Murky Water", 1],
     "Workbench": ["Camp Fire"]
+  },
+  {
+    "Name": "Duct Tape",
+    "Recipe": ["Glue", 1, "Cloth Fragment", 10],
+    "Workbench": ["Self"]
+  },
+  {
+    "Name": "Cloth Fragment",
+    "Recipe": ["Cotton", 1],
+    "Workbench": ["Self"]
   }
 ]
