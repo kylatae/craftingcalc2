@@ -36,4 +36,42 @@ function storeAllItems(items) {
 }
 
 // Display the recipe
-function displayRecipe() { /* Implementation will go here */} 
+function displayRecipe() {
+    const selectedItem = document.getElementById('craftable-items').value;
+    const recipeDetails = document.getElementById('recipe-details');
+    recipeDetails.innerHTML = ''; // Clear previous recipe
+
+    const selectedRecipe = craftingItems.find(item => item.Name === selectedItem);
+
+    // Header
+    const title = document.createElement('h2');
+    title.textContent = `Craft ${selectedRecipe.Name}`;
+    recipeDetails.appendChild(title);
+
+    // Recipe list
+    const recipeList = document.createElement('ul');
+    for (let i = 0; i < selectedRecipe.Recipe.length; i += 2) {
+        const ingredientName = selectedRecipe.Recipe[i];
+        const quantity = selectedRecipe.Recipe[i + 1];
+
+        const listItem = document.createElement('li');
+        listItem.textContent = `${ingredientName} x${quantity}`;
+        listItem.title = createTooltipText(ingredientName); // Add tooltip on mouseover
+
+        recipeList.appendChild(listItem);
+    }
+    recipeDetails.appendChild(recipeList);
+
+    // Workbench
+    const workbench = document.createElement('p');
+    workbench.textContent = `Workbench: ${selectedRecipe.Workbench[0]}`;
+    recipeDetails.appendChild(workbench);
+}
+
+function createTooltipText(itemName) {
+    const item = itemData[itemName];
+    return `Name: ${item.Name} 
+Type: ${item.Type}
+Obtain: ${item.Obtain.join(', ')}
+Description: ${item.Description}`;
+}

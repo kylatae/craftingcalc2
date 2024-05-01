@@ -3,5 +3,10 @@
     "Name": "Glue",
     "Recipe": ["Bone", 5, "Bottled Water", 1],
     "Workbench": ["Chemistry Table"]
+  },
+  {
+    "Name": "Bottled Water",
+    "Recipe": ["Murky Water", 1],
+    "Workbench": ["Camp Fire"]
   }
 ]

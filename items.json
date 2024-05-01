@@ -16,5 +16,11 @@
     "Type": "Drink",
     "Obtain": ["Crafting", "Drop"],
     "Description": "+20 Thirst"
+  },
+  {
+    "Name": "Murky Water",
+    "Type": "Drink",
+    "Obtain": ["Drop"],
+    "Description": "+20 Thirst, 12% Chance Dysentery"
   }
 ]

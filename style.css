@@ -3,3 +3,7 @@ body {
   font-family: sans-serif;
   margin: 20px;
 }
+
+#recipe-details ul li {
+  cursor: help; /* Change cursor to indicate tooltip */
+}
