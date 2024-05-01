@@ -1,0 +1,7 @@
+[
+  {
+    "Name": "Glue",
+    "Recipe": ["Bone", 5, "Bottled Water", 1],
+    "Workbench": ["Chemistry Table"]
+  }
+]

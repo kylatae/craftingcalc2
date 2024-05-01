@@ -1,0 +1,20 @@
+[
+  {
+    "Name": "Glue",
+    "Type": "Ingredient",
+    "Obtain": ["Crafting", "Drop"],
+    "Description": "Crafting Ingredient"
+  },
+  {
+    "Name": "Bone",
+    "Type": "Ingredient",
+    "Obtain": ["Drop"],
+    "Description": "Crafting Ingredient"
+  },
+  {
+    "Name": "Bottled Water",
+    "Type": "Drink",
+    "Obtain": ["Crafting", "Drop"],
+    "Description": "+20 Thirst"
+  }
+]
