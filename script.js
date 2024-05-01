@@ -11,7 +11,6 @@ fetch('./items.json')
 // Data storage
 let craftingItems = []; 
 let itemData = {};
-console.log(craftingItems)
 // Function to populate the select dropdown
 function populateCraftableList(items) {
     craftingItems = items; // Store craftable items data 
